@@ -9,3 +9,10 @@
     height: unset !important;
     max-height: unset !important;
 }
+/* .slds-table_bordered tbody tr:hover {
+    background-color: transparent;
+} */
+
+.slds-form-element_horizontal .slds-form-element__label {
+    white-space: nowrap;
+}

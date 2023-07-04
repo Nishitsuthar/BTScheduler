@@ -259,6 +259,14 @@ export default base => class GanttToolbar extends base {
                         {
                             type       : 'button',
                             color      : 'b-blue',
+                            ref        : 'saveDataButton',
+                            icon       : 'b-fa b-fa-save',
+                            text       : 'Save Changes',
+                            onAction : 'up.onSaveClick'
+                        },
+                        {
+                            type       : 'button',
+                            color      : 'b-blue',
                             ref        : 'criticalPathsButton',
                             icon       : 'b-fa b-fa-fire',
                             text       : 'Critical paths',
@@ -478,5 +486,13 @@ export default base => class GanttToolbar extends base {
         if (this.gantt.project.stm.canRedo) {
             this.gantt.project.stm.redo();
         }
+    }
+
+    onSaveClick(){
+        console.log('gantt :- ',this.gantt);
+        let temp = this.gantt.data;
+        console.log('gantt data:- ',JSON.parse(JSON.stringify(temp)));
+        console.log('gantt project data:- ',this.gantt.project);
+
     }
 };

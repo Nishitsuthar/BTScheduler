@@ -4,13 +4,18 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { loadScript, loadStyle } from "lightning/platformResourceLoader";
 import GANTT from "@salesforce/resourceUrl/bryntum_gantt";
 import GanttToolbarMixin from "./lib/GanttToolbar";
-import data from './data/launch-saas'
-
+import data from './data/launch-saas';
+import shceduleWrapperDataFromApex from "salesforce/apex/bryntumGanttController.getScheduleWrapperAtLoading" 
 export default class Gantt_component extends LightningElement {
     connectedCallback(){
 
     // }
     // renderedCallback() {
+        try {
+            shceduleWrapperDataFromApex()
+        } catch (error) {
+            
+        }
         if (this.bryntumInitialized) {
             return;
         }
@@ -22,7 +27,7 @@ export default class Gantt_component extends LightningElement {
         ])
             .then(() => {
                 console.log('lib loaded');
-                this.createGantt();
+                this.createGanttChartInitially();
             })
             .catch(error => {
                 this.dispatchEvent(
@@ -35,7 +40,7 @@ export default class Gantt_component extends LightningElement {
             });
     }
 
-    createGantt() {
+    createGanttChartInitially() {
         const GanttToolbar = GanttToolbarMixin(bryntum.gantt.Toolbar);
 
         const project = new bryntum.gantt.ProjectModel({
@@ -48,6 +53,7 @@ export default class Gantt_component extends LightningElement {
             calendarsData: data.calendars.rows
         });
 
+        console.log('project:-',project);
         const gantt = new bryntum.gantt.Gantt({
             project,
             appendTo: this.template.querySelector(".container"),
@@ -123,9 +129,12 @@ export default class Gantt_component extends LightningElement {
             }
         });
 
+        console.log('gantt:-',gantt);
+
         project.commitAsync().then(() => {
             // console.timeEnd("load data");
             const stm = gantt.project.stm;
+            console.log('stm',stm);
 
             stm.enable();
             stm.autoRecord = true;
