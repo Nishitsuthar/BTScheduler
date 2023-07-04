@@ -2,8 +2,6 @@ public with sharing class bryntumGanttController {
     @AuraEnabled
     public static DataTableDetails getScheduleWrapperAtLoading(String objApi, string scheduleid){
 
-
-        System.debug('getScheduleWrapperAtLoading called===');
         List<Id> filesIdList = new List<Id>();
         Set<Id> notesIdList = new Set<Id>();
 
@@ -222,4 +220,20 @@ public with sharing class bryntumGanttController {
         @AuraEnabled
         public Integer notesLength;
     }
+
+    @AuraEnabled(Cacheable=true)
+    public static List<buildertek__Project__c> searchProject(String searchProjectName){
+        List<buildertek__Project__c> searchProjectList = [SELECT Name, Id FROM buildertek__Project__c WHERE Name LIKE :('%' + searchProjectName + '%')];
+        System.debug('searchProjectList: ' + searchProjectList);
+        return searchProjectList;
+    }
+
+    @AuraEnabled(Cacheable=true)
+    public static List<User> searchUsers(String searchProjectManagerName){
+        System.debug('searchProjectManagerName: ' + searchProjectManagerName);
+        List<User> searchProjectManagerList = [SELECT Name, Id FROM User WHERE Name LIKE :('%' + searchProjectManagerName + '%')];
+        System.debug('searchProjectManagerList: ' + searchProjectManagerList);
+        return searchProjectManagerList;
+    }
+
 }

@@ -24,36 +24,12 @@
                             <div class="slds-form-element__control">
                                 <div class="slds-combobox_container">
                                     <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click">
-                                        <lightning-input label="Project " type="search"
+                                        <lightning-input label="Project" type="search"
                                             placeholder="Search BT Projects..." style="margin-bottom: 20px !important;"
-                                            icon-name="utility:search" icon-position="right" value={searchKey}
-                                            onchange={handleSearchKeyChange}></lightning-input>
-                                            <!--  -->
-                                                <!-- <lightning-input label="Project" type="search" placeholder="Search BT Projects..." style="margin-bottom: 20px !important;" 
-                                                value={projectName} oninput={handleRecordSearch}> </lightning-input>
-                                        
-                                                    <div class="highlights-icon-container slds-avatar slds-m-left_small icon" style="background-color: #e56798">
-                                                        <img src="https://buildertek2-dev-ed.develop.my.salesforce.com/img/icon/t4v35/custom/custom24_120.png" alt="">
-                                                    </div>
-
-                                                <div if:true={showRecords} class="records">
-                                                    <ul class="suggestions">
-                                                        <template for:each={suggestedResult} for:item="opportunity">
-                                                            <li key={opportunity.Id} onclick={suggestedRecord}>
-                                                                <div class="recitem">
-                                                                    <div class="recicon">
-                                                                        <lightning-icon icon-name='standard:opportunity' size='medium'>
-                                                                        </lightning-icon>
-                                                                    </div>
-                                                                    <div class="opportunity-name">{opportunity.Name}
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-                                                        </template>
-                                                    </ul>
-                                                </div> -->
-                                            <!--  -->
+                                            name="searchProjectName" value={searchProjectName}
+                                            onchange={handleProjectSearch}></lightning-input>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -88,8 +64,7 @@
                                 <div class="slds-combobox_container">
                                     <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click">
                                         <lightning-input name="project" label="Project Manager - User" type="search"
-                                            placeholder="Search People..." icon-name="utility:search"
-                                            icon-position="right"></lightning-input>
+                                            placeholder="Search People..." value={searchProjectManager} onchange={handleProjectManagerSearch}></lightning-input>
                                     </div>
                                 </div>
                             </div>

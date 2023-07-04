@@ -4,18 +4,13 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { loadScript, loadStyle } from "lightning/platformResourceLoader";
 import GANTT from "@salesforce/resourceUrl/bryntum_gantt";
 import GanttToolbarMixin from "./lib/GanttToolbar";
-import data from './data/launch-saas';
-import shceduleWrapperDataFromApex from "salesforce/apex/bryntumGanttController.getScheduleWrapperAtLoading" 
+import data from './data/launch-saas'
+
 export default class Gantt_component extends LightningElement {
     connectedCallback(){
 
     // }
     // renderedCallback() {
-        try {
-            shceduleWrapperDataFromApex()
-        } catch (error) {
-            
-        }
         if (this.bryntumInitialized) {
             return;
         }
