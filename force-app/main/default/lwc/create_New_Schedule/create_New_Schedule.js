@@ -4,11 +4,11 @@ import searchUsers from '@salesforce/apex/bryntumGanttController.searchUsers';
 export default class Create_New_Schedule extends LightningElement {
 
     @track searchProjectName = '';
-    suggestedProjectName = [];
+    @track suggestedProjectName = [];
     @track showProjectName = false;
-    
+
     @track searchProjectManager = '';
-    suggestedProjectManagerName = [];
+    @track suggestedProjectManagerName = [];
     @track showProjectManagerName = false;
 
     handleProjectSearch(event) {
@@ -20,17 +20,17 @@ export default class Create_New_Schedule extends LightningElement {
                 this.searchTimeout = setTimeout(() => {
                     searchProject({ searchProjectName: this.searchProjectName })
                         .then((result) => {
-                            this.searchProjectName = result;
-                            console.log('result',result);
-                            console.log('result type',typeof(result));
-                            this.showSearchedProjectName = true;
+                            this.suggestedProjectName = result;
+                            console.log('result', result);
+                            console.log('result type', typeof (result));
+                            this.showProjectName = true;
                         })
                         .catch((error) => {
                             console.log('error:', JSON.stringify(error));
                         });
                 }, 300);
             } else {
-                this.showSearchedProjectName = false;
+                this.showProjectName = false;
                 this.suggestedProjectName = [];
             }
         } catch (error) {
@@ -48,8 +48,8 @@ export default class Create_New_Schedule extends LightningElement {
                     searchUsers({ searchProjectManagerName: this.searchProjectManager })
                         .then((result) => {
                             this.suggestedProjectManagerName = result;
-                            console.log('result',result);
-                            console.log('result type',typeof(result));
+                            console.log('result', result);
+                            console.log('result type', typeof (result));
                             this.showProjectManagerName = true;
                         })
                         .catch((error) => {
@@ -64,4 +64,5 @@ export default class Create_New_Schedule extends LightningElement {
             console.log('error', JSON.stringify(error));
         }
     }
+
 }

@@ -28,8 +28,24 @@
                                             placeholder="Search BT Projects..." style="margin-bottom: 20px !important;"
                                             name="searchProjectName" value={searchProjectName}
                                             onchange={handleProjectSearch}></lightning-input>
+                                        <div if:true={showProjectName} class="records">
+                                            <ul class="suggestions">
+                                                <template for:each={suggestedProjectName} for:item="project">
+                                                    <li key={project.Id} onclick={suggestedRecord}>
+                                                        <div class="recitem">
+                                                            <div class="highlights-icon-container slds-avatar slds-m-right_small icon"
+                                                                style="background-color: #e56798">
+                                                                <img src="https://btservice360-dev-ed.my.salesforce.com/img/icon/t4v35/custom/custom24_120.png"
+                                                                    alt="">
+                                                            </div>
+                                                            <div class="project-name">{project.Name}
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </template>
+                                            </ul>
+                                        </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -64,7 +80,23 @@
                                 <div class="slds-combobox_container">
                                     <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click">
                                         <lightning-input name="project" label="Project Manager - User" type="search"
-                                            placeholder="Search People..." value={searchProjectManager} onchange={handleProjectManagerSearch}></lightning-input>
+                                            placeholder="Search People..." value={searchProjectManager}
+                                            onchange={handleProjectManagerSearch}></lightning-input>
+                                        <div if:true={showProjectManagerName} class="records">
+                                            <ul class="suggestions">
+                                                <template for:each={suggestedProjectManagerName} for:item="user">
+                                                    <li key={user.Id} onclick={suggestedRecord}>
+                                                        <div class="recitem">
+                                                            <div class="highlights-icon-container slds-avatar slds-m-right_small icon">
+                                                                <lightning-icon icon-name='standard:user' alternative-text='user' size='medium'></lightning-icon>
+                                                            </div>
+                                                            <div class="user-name">{user.Name}
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </template>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -109,5 +141,4 @@
             </div>
         </lightning-record-edit-form>
     </div>
-
 </template>

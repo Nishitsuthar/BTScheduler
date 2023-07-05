@@ -1,7 +1,9 @@
 public with sharing class bryntumGanttController {
     @AuraEnabled
-    public static DataTableDetails getScheduleWrapperAtLoading(String objApi, string scheduleid){
+    public static DataTableDetails getScheduleWrapperAtLoading(string scheduleid){
 
+
+        System.debug('getScheduleWrapperAtLoading called===');
         List<Id> filesIdList = new List<Id>();
         Set<Id> notesIdList = new Set<Id>();
 
@@ -10,7 +12,7 @@ public with sharing class bryntumGanttController {
 
         String strQuery = 'SELECT ';
 
-        strQuery += 'Id,Name,buildertek__Type__c,buildertek__Indent_Task__c,buildertek__Reference_for_Import__c,buildertek__Lag__c,buildertek__Schedule__c,buildertek__Budget__c,buildertek__Add_To_All_Active_Schedules__c,buildertek__Notes__c,buildertek__Schedule__r.Name,buildertek__Start__c,buildertek__Finish__c,buildertek__Duration__c,buildertek__Contractor__c,buildertek__Contractor__r.Name,buildertek__Phase__c,buildertek__Completion__c, buildertek__Dependency__c,buildertek__Dependency__r.Name,buildertek__Contractor_Resource__c,buildertek__Contractor_Resource__r.Name,buildertek__Resource__c, buildertek__Resource__r.Name,buildertek__Milestone__c,buildertek__Order__c,buildertek__Budget_Line__c,CreatedDate FROM ' + objApi + ' where buildertek__Schedule__c = :  scheduleid Order By buildertek__Order__c NULLS LAST,CreatedDate';//CreatedDate//Order by buildertek__Milestone__c , Order__c ASC NULLS LAST, Auto_Number__c ASC
+        strQuery += 'Id,Name,buildertek__Type__c,buildertek__Indent_Task__c,buildertek__Reference_for_Import__c,buildertek__Lag__c,buildertek__Schedule__c,buildertek__Budget__c,buildertek__Add_To_All_Active_Schedules__c,buildertek__Notes__c,buildertek__Schedule__r.Name,buildertek__Start__c,buildertek__Finish__c,buildertek__Duration__c,buildertek__Contractor__c,buildertek__Contractor__r.Name,buildertek__Phase__c,buildertek__Completion__c, buildertek__Dependency__c,buildertek__Dependency__r.Name,buildertek__Contractor_Resource__c,buildertek__Contractor_Resource__r.Name,buildertek__Resource__c, buildertek__Resource__r.Name,buildertek__Milestone__c,buildertek__Order__c,buildertek__Budget_Line__c,CreatedDate FROM buildertek__Project_Task__c where buildertek__Schedule__c = :  scheduleid Order By buildertek__Order__c NULLS LAST,CreatedDate';//CreatedDate//Order by buildertek__Milestone__c , Order__c ASC NULLS LAST, Auto_Number__c ASC
         system.debug('strQuery---' + strQuery);
 
         dataTableDtls.lstOfSObjs = Database.query(strQuery);
@@ -18,7 +20,7 @@ public with sharing class bryntumGanttController {
         System.debug('dataTableDtls**=='+JSON.serialize(dataTableDtls.lstOfSObjs));
         List<buildertek__Project_Task__c> projectTasksSorted = dataTableDtls.lstOfSObjs;
 
-        String milestonequery = 'Select buildertek__Project__r.Name,buildertek__Schedule__r.Name, buildertek__Dependency__r.Finish__c,buildertek__Contractor_Resource__r.Name,buildertek__Contractor__r.Name,buildertek__Resource__r.Name, ' + new_BT_Utils.getQueryStringForObjectWithAllFields('buildertek__Project_Task__c');
+        String milestonequery = 'Select buildertek__Project__r.Name,buildertek__Schedule__r.Name, buildertek__Dependency__r.buildertek__Finish__c,buildertek__Contractor_Resource__r.Name,buildertek__Contractor__r.Name,buildertek__Resource__r.Name, ' + new_BT_Utils.getQueryStringForObjectWithAllFields('buildertek__Project_Task__c');
         milestonequery = milestonequery + ' From buildertek__Project_Task__c where buildertek__Schedule__c =:scheduleid AND buildertek__Milestone__c= true';
         List<buildertek__Project_Task__c> milestoneTaskList = DataBase.query(milestonequery);
 
@@ -230,10 +232,8 @@ public with sharing class bryntumGanttController {
 
     @AuraEnabled(Cacheable=true)
     public static List<User> searchUsers(String searchProjectManagerName){
-        System.debug('searchProjectManagerName: ' + searchProjectManagerName);
         List<User> searchProjectManagerList = [SELECT Name, Id FROM User WHERE Name LIKE :('%' + searchProjectManagerName + '%')];
         System.debug('searchProjectManagerList: ' + searchProjectManagerList);
         return searchProjectManagerList;
     }
-
 }
