@@ -3,7 +3,7 @@ export default {
 
     "project" : {
         "calendar"  : "general",
-        "startDate" : "2019-01-14"
+        "startDate" : "2023-05-14"
     },
 
     "calendars" : {

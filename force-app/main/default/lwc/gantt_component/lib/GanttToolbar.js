@@ -265,6 +265,19 @@ export default base => class GanttToolbar extends base {
                             onAction : 'up.onSaveClick'
                         },
                         {
+                            type     : 'button',
+                            text     : 'Export as .xslx',
+                            ref      : 'excelExportBtn',
+                            icon     : 'b-fa-file-export',
+                            onAction : () => {
+                                console.log('In export function');
+                                const filename = 'test file.xml';
+                                gantt.features.excelExporter.export({
+                                    filename
+                                });
+                            }
+                        },
+                        {
                             type       : 'button',
                             color      : 'b-blue',
                             ref        : 'criticalPathsButton',
@@ -489,10 +502,17 @@ export default base => class GanttToolbar extends base {
     }
 
     onSaveClick(){
-        console.log('gantt :- ',this.gantt);
-        let temp = this.gantt.data;
-        console.log('gantt data:- ',JSON.parse(JSON.stringify(temp)));
-        console.log('gantt project data:- ',this.gantt.project);
+        // let temp2 = this.gantt.__data;
+        // console.log('gantt :- ',temp2);
+        try {
+            console.log('gantt-->',this.gantt);
+            let temp = gantt.project.taskStore.getRecords();
+            console.log('gantt data:- ',JSON.parse(JSON.stringify(temp)));
+            console.log('gantt project data:- ',this.gantt.project);
+            
+        } catch (error) {
+            console.log('Error-->'+error+' message-->'+error.message);
+        }
 
     }
 };

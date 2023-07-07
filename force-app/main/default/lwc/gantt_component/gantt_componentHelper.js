@@ -43,6 +43,7 @@ function formatApexDatatoJSData(scheduleData, scheduleItemsData, scheduleItemsDa
 
                 taskPhaseRow["startDate"] = ""
                 taskPhaseRow["expanded"] = true
+                taskPhaseRow["Contractor"] = 'test'
                 taskPhaseRow["endDate"] = ""
                 taskPhaseRow["children"] = []
                 taskPhaseRow["customtype"] = 'Phase'
