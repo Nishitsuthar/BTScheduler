@@ -18,6 +18,7 @@ export default class Create_New_Schedule extends NavigationMixin(LightningElemen
     @track showProjectManagerName = false;
     @track searchbarValue = '';
     @track masterId = '';
+    @track masterRec = '';
     @track listOfFields = [];
     @track scheduleLineItems = [];
     description = '';
@@ -122,7 +123,7 @@ export default class Create_New_Schedule extends NavigationMixin(LightningElemen
     }
 
     saveSelectedPO(event) {
-        let masterRec = event.currentTarget.dataset.id;
+        this.masterRec = event.currentTarget.dataset.id;
         console.log('masterId', masterRec);
         getScheduleItemList({ masterId: masterRec })
             .then((result) => {
@@ -141,12 +142,7 @@ export default class Create_New_Schedule extends NavigationMixin(LightningElemen
 
     handleStartDateChange(event) {
         this.initialDate = event.target.value;
-        let date = new Date(this.initialDate);
-        let year = date.getFullYear();
-        let month = ('0' + (date.getMonth() + 1)).slice(-2);
-        let day = ('0' + date.getDate()).slice(-2);
-        this.formattedDate = year + '-' + month + '-' + day;
-        console.log('formattedDate', this.formattedDate);
+        console.log('formattedDate', this.initialDate);
     }
 
     handleTypeChange(event) {
@@ -154,52 +150,40 @@ export default class Create_New_Schedule extends NavigationMixin(LightningElemen
         console.log('type', typeof (this.type));
     }
 
-    // createSchedule() {
-    //     try {
-    //         console.log('createSchedule');
-    //         console.log(`description: ${this.description} projectId: ${this.projectId} formattedDate: ${this.formattedDate} type: ${this.type} userId: ${this.userId}`);
-    //         createNewSchedule({ description: this.description, project: this.projectId, initialDate: this.formattedDate, type: this.type, user: this.userId })
-    //             .then((result) => {
-    //                 console.log('url:', result);
-    //                 // let cmpDef = {
-    //                 //     componentDef: `gantt_component\ ${result}`,
-    //                 // };
-    //                 // let encodedDef = btoa(JSON.stringify(cmpDef));
-    //                 // this[NavigationMixin.Navigate]({
-    //                 //     type: "standard__component",
-    //                 //     attributes: {
-    //                 //         url: "/one/one.app#" + encodedDef
-    //                 //     }
-    //                 // });
-    //                 this[NavigationMixin.Navigate]({
-    //                     type: 'standard__recordPage',
-    //                     attributes: {
-    //                     recordId: record,
-    //                     actionName: 'view'
-    //                 }
-    //                 });
-
-    //             })
-    //             .catch((error) => {
-    //                 console.log('error:', error);
-    //             })
-    //     } catch (error) {
-    //         console.log('error', JSON.stringify(error));
-    //     }
-    // }
     createSchedule() {
-        let recordId = 'a2zDm0000004bF6IAI'; 
+        try {
+            console.log(`description: ${this.description} projectId: ${this.projectId} formattedDate: ${this.formattedDate} type: ${this.type} userId: ${this.userId} masterRec: ${this.masterRec}`);
+            createNewSchedule({ description: this.description, project: this.projectId, initialDate: this.initialDate, type: this.type, user: this.userId, masterId: this.masterRec })
+                .then((result) => {
+                    console.log('url:', result);
+                    // this[NavigationMixin.Navigate]({
+                    //     type: 'standard__recordPage',
+                    //     attributes: {
+                    //         recordId: result,
+                    //         objectApiName: 'buildertek__Schedule__c',
+                    //         actionName: 'view'
+                    //     }
+                    // });
+                    let cmpDef = {
+                        componentDef: "c:gantt_component",
+                        id: result,
+                    };
 
-        this[NavigationMixin.Navigate]({
-            type: 'standard__recordPage',
-            attributes: {
-                recordId: recordId,
-                objectApiName: 'buildertek__Schedule__c',
-                actionName: 'view'
-            }
-        });
+                    let encodedDef = btoa(JSON.stringify(cmpDef));
+                    this[NavigationMixin.Navigate]({
+                        type: "standard__webPage",
+                        attributes: {
+                            url: "/one/one.app#" + encodedDef
+                        }
+                    });
+                })
+                .catch((error) => {
+                    console.log('error:', error);
+                })
+        } catch (error) {
+            console.log('error', JSON.stringify(error));
+        }
     }
-
 
     disconnectedCallback() {
         document.removeEventListener('click', this.handleDocumentEvent.bind(this));

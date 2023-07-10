@@ -2,7 +2,7 @@
 import {LightningElement,track} from "lwc";
 import {ShowToastEvent} from "lightning/platformShowToastEvent";
 import {loadScript,loadStyle} from "lightning/platformResourceLoader";
-import GANTT from "@salesforce/resourceUrl/bryntum_gantt";
+import GANTT from "@salesforce/resourceUrl/bryntum_gantt_new";
 import GanttToolbarMixin from "./lib/GanttToolbar";
 import data from './data/launch-saas';
 import scheduleWrapperDataFromApex from "@salesforce/apex/bryntumGanttController.getScheduleWrapperAtLoading"
@@ -272,7 +272,7 @@ export default class Gantt_component extends LightningElement {
           type: "predecessor",
           width: 120,
           renderer: (record) => {
-            console.log('record :- ',record.record.__data);
+            console.log('record :- ',JSON.parse(JSON.stringify(record.record.data)));
             if (record.record._data.type == "Project") {
               return "";
             }
@@ -335,6 +335,8 @@ export default class Gantt_component extends LightningElement {
           width: 120,
           editor: false,
           renderer: function (record) {
+            console.log('record :- ',JSON.parse(JSON.stringify(record.record.data)));
+
             if (
               record.record._data.type == "Task" &&
               record.record._data.name != "Milestone Complete"

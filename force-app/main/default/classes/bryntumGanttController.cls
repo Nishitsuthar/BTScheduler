@@ -1,4 +1,5 @@
 public with sharing class bryntumGanttController {
+    
     @AuraEnabled
     public static DataTableDetails getScheduleWrapperAtLoading(string scheduleid){
 
@@ -103,8 +104,8 @@ public with sharing class bryntumGanttController {
         system.debug('Schedule Items ::' + dataTableDtls.lstOfSObjs);
         system.debug('Schedule Item ::' + dataTableDtls);
         buildertek__Schedule__c schedulerec = [Select Id, Name, buildertek__Gantt_Draw_Dependencies__c, buildertek__Gantt_Highlight_Non_Working_Time__c, buildertek__Gantt_Project_Lines__c, buildertek__Gantt_Task_Labels__c, buildertek__Hide_Gantt_Schedule__c, buildertek__Project__c, buildertek__Project__r.Name
-                                               from buildertek__Schedule__c
-                                               Where Id = :scheduleid];
+                                            from buildertek__Schedule__c
+                                            Where Id = :scheduleid];
         dataTableDtls.scheduleObj = schedulerec;
         NotesAttachmet notesAttachFiles = new NotesAttachmet();
         Map<String, NotesAttachmet> getnotesFilesLengthMap = new Map<String, NotesAttachmet>();
@@ -124,17 +125,17 @@ public with sharing class bryntumGanttController {
             if (notesIdList.size() > 0){
                 Set<Id> contentDocumentIds = new Set<Id>();
                 for (ContentDocumentLink conDoc : [SELECT ContentDocumentId, LinkedEntityId
-                                                   FROM ContentDocumentLink
-                                                   WHERE LinkedEntityId IN:notesIdList]){
+                                                FROM ContentDocumentLink
+                                                WHERE LinkedEntityId IN:notesIdList]){
                     contentDocumentIds.add(conDoc.ContentDocumentId);
                     docAndParentMap.put(conDoc.ContentDocumentId, conDoc.LinkedEntityId);
                 }
                 System.debug(docAndParentMap);
                 //get all the content notes using contentDocumentIds
                 List<ContentNote> contentNotes = [SELECT Id, Content, Title, TextPreview, CreatedDate
-                                                  from ContentNote
-                                                  where Id In:contentDocumentIds
-                                                  order by CreatedDate ASC];
+                                                from ContentNote
+                                                where Id In:contentDocumentIds
+                                                order by CreatedDate ASC];
                 System.debug(contentNotes);
                 for (ContentNote noteRec : contentNotes){
                     system.debug(noteRec.Id);
@@ -180,8 +181,8 @@ public with sharing class bryntumGanttController {
         }
 
         User curruser = [select id, Name, buildertek__Hide_Schedule__c
-                         from User
-                         where id = :userInfo.getUserId()];
+                        from User
+                        where id = :userInfo.getUserId()];
 
         List<object> fileLenListCustom = new list<Object>();
 
@@ -262,6 +263,7 @@ public with sharing class bryntumGanttController {
             return null;
         }
     }
+
     @AuraEnabled
     public static List<contactWrap> getContacts(String selected,String searchname,String searchaccount){
         String contactsearch = '%'+''+'%';
@@ -295,7 +297,7 @@ public with sharing class bryntumGanttController {
                     }
 
                     if(selected == String.valueOf(con.Id) && selected != ''){
-                     conwrapLabelVal.check = true;
+                    conwrapLabelVal.check = true;
                     }
                     conWrapList.add(conwrapLabelVal);
             }
@@ -481,33 +483,123 @@ public with sharing class bryntumGanttController {
     }
 
     @AuraEnabled
-    public static String createNewSchedule(String description, String project ,Date initialDate, String type, String user) {
-        try {
-            System.debug('description: ' + description);
-            System.debug('project: ' + project);
-            System.debug('initialDate: ' + initialDate);
-            System.debug('type: ' + type);
-            System.debug('user: ' + user);
-            buildertek__Schedule__c schedule = new buildertek__Schedule__c(
-                buildertek__Description__c = description,
-                buildertek__Project__c = project,
-                buildertek__Initial_Start_Date__c = initialDate,
-                buildertek__Type__c = type,
-                buildertek__Project_Managers__c = user
-            );
-            insert schedule;
-            String pageUrl = schedule.Id;
-            return pageUrl;
-        } catch (Exception e) {
-            System.debug('error: '+e);
-        }
-        return 'error';
+    public static String createNewSchedule(String description, Id project ,Date initialDate, String type, String user, String masterId) {
+        System.debug('description: ' + description);
+        System.debug('project: ' + project);
+        System.debug('initialDate: ' + initialDate);
+        System.debug('type: ' + type);
+        System.debug('user: ' + user);
+        System.debug('masterId: ' + masterId);
+        buildertek__Schedule__c schedule = new buildertek__Schedule__c(
+            buildertek__Description__c = description,
+            buildertek__Project__c = project,
+            buildertek__Initial_Start_Date__c = date.parse(initialDate.format()),
+            buildertek__Type__c = type,
+            buildertek__Project_Managers__c = user
+        );
+        insert schedule;
+        String pageUrl = schedule.Id;
+        dependencyLogic(schedule.Id, masterId, initialDate);
+        return pageUrl;
     }
+
+    @AuraEnabled
+    public static void dependencyLogic (String recordId, String masterId, Date initialDate){
+        // Date initialDate =  System.Today();
+        System.debug('initialDate: ' + initialDate);
+        Map<Id, buildertek__Project_Task__c> projectTaskMap = new Map<Id, buildertek__Project_Task__c>();
+
+        List<buildertek__Project_Task__c> masterScheduleList = new List<buildertek__Project_Task__c>([select Id, Name, buildertek__Start__c,buildertek__Contractor__c,buildertek__Phase__c, buildertek__Schedule__c,buildertek__Dependency__r.Name, buildertek__Dependency__r.buildertek__Schedule__c, buildertek__Completed__c, buildertek__Completion__c, buildertek__Contractor_Resource__c, buildertek__Type__c,buildertek__Cost_Code__c, buildertek__Duration__c, buildertek__Finish__c, buildertek__Resource__c, buildertek__Lag__c, buildertek__Last_Saved_End_Date__c, buildertek__Last_Saved_Start_Date__c, buildertek__Material_Ordered__c, buildertek__Material_Received__c, buildertek__Milestone__c, buildertek__Notes__c, buildertek__Order__c, buildertek__Original_End_Date__c, buildertek__Original_Start_Date__c, buildertek__Payable_Task__c, buildertek__Project__c, buildertek__Purchase_Order__c, buildertek__Reason_for_Date_Change__c, buildertek__Reason_for_Date_Change_PL__c, buildertek__Required_Completion_Date__c  from buildertek__Project_Task__c where buildertek__Schedule__c = :masterId  order by createdDate]);
+        
+        System.debug('masterScheduleList: ' + masterScheduleList);
+
+        Map<String, String> predecessorMap = new Map<String, String>();
+
+        for (buildertek__Project_Task__c scheduleitem : masterScheduleList){
+            if (!scheduleitem.buildertek__Milestone__c){
+
+                if (scheduleitem.buildertek__Dependency__c != null) {
+                    predecessorMap.put(scheduleitem.Id, scheduleitem.buildertek__Dependency__c);
+                }
+
+                buildertek__Project_Task__c schItem = new buildertek__Project_Task__c();
+                schItem.buildertek__Completion__c = scheduleitem.buildertek__Completion__c;
+                schItem.buildertek__Contractor__c = scheduleitem.buildertek__Contractor__c;
+                schItem.buildertek__Contractor_Resource__c = scheduleitem.buildertek__Contractor_Resource__c;
+                
+                if (scheduleitem.buildertek__Duration__c != 0 && scheduleitem.buildertek__Duration__c != null){
+                    schItem.buildertek__Duration__c = scheduleitem.buildertek__Duration__c;
+                } else{
+                    schItem.buildertek__Duration__c = 1;
+                }
+
+                schItem.buildertek__Start__c = initialDate;
+                schItem.buildertek__Finish__c = addDaysSkippingWeekends(initialDate, Integer.valueOf(schItem.buildertek__Duration__c));
+                System.debug('finish date in import master before insertion ==> ' + schItem.buildertek__Finish__c + ' and master item id ' + schItem.id);
+                schItem.buildertek__Resource__c = scheduleitem.buildertek__Resource__c;
+                schItem.buildertek__Lag__c = scheduleitem.buildertek__Lag__c;
+                schItem.buildertek__Milestone__c = scheduleitem.buildertek__Milestone__c;
+                schItem.buildertek__Notes__c = scheduleitem.buildertek__Notes__c;
+                schItem.buildertek__Order__c = scheduleitem.buildertek__Order__c;
+                schItem.buildertek__Original_Start_Date__c = Date.today();
+                schItem.buildertek__Original_End_Date__c = Date.today().adddays(Integer.valueOf(scheduleitem.buildertek__Duration__c));
+                schItem.buildertek__Phase__c = scheduleitem.buildertek__Phase__c;
+                schItem.buildertek__Type__c = scheduleitem.buildertek__Type__c;
+                schItem.buildertek__Purchase_Order__c = scheduleitem.buildertek__Purchase_Order__c;
+                schItem.buildertek__Reason_for_Date_Change__c = scheduleitem.buildertek__Reason_for_Date_Change__c;
+                schItem.buildertek__Reason_for_Date_Change_PL__c = scheduleitem.buildertek__Reason_for_Date_Change_PL__c;
+                schItem.buildertek__Required_Completion_Date__c = scheduleitem.buildertek__Required_Completion_Date__c;
+                schItem.buildertek__Schedule__c = recordId;
+                schItem.buildertek__Reference_for_Import__c = scheduleitem.Id;
+                
+                // if (initialDate != null){
+                //     schItem.buildertek__Start__c = initialDate;
+                //     System.debug('start date in import master before insertion ==> ' + schItem.buildertek__Start__c);
+                // } else{
+                //     Date today = system.today();
+                //     schItem.buildertek__Start__c = today;
+                //     System.debug('start date in else condition import master before insertion ==> ' + schItem.buildertek__Start__c);
+                // }
+
+                schItem.Name = scheduleitem.Name;
+                buildertek__Project_Task__c schItemClone = schItem.Clone(false, true);
+                projectTaskMap.put(scheduleitem.Id, schItemClone);
+
+                System.debug('projectTaskMap values ==> ' + projectTaskMap.values());
+            }
+        }
+        
+        // Database.SaveResult[] saveResultList = Database.insert (projectTaskMap.values(), false);
+
+        insert projectTaskMap.values();
+
+        for (String key : predecessorMap.keySet()) {
+            projectTaskMap.get(key).buildertek__Dependency__c = projectTaskMap.get(predecessorMap.get(key)).Id;
+        }
+
+        update projectTaskMap.values();
+    }
+
+
+    // Skip weekend and calculate date
+	public static Date addDaysSkippingWeekends(Date sDate, Integer days){
+		Date result = sDate;
+		Integer addedDays = 0;
+		while (addedDays < days){
+			System.debug('result ==> '+result);
+			result = result.addDays(1);
+			System.debug('result after adding day ==> '+result);
+			// if (!(result.getDayOfWeek() == DayOfWeek.SATURDAY || result.getDayOfWeek() == DayOfWeek.SUNDAY)) {
+			//     ++addedDays;
+			// }
+			DateTime currentDate = DateTime.newInstance(result.year(), result.month(), result.day());
+			String todayDay = currentDate.format('EEEE');
+			if (todayDay != 'Saturday' && todayDay != 'Sunday'){
+				++addedDays;
+			}
+		}
+		System.debug('end result in addDayskepping method ==> '+result);
+		return result;
+	}
+
 }
-
-//     @AuraEnabled
-//     public static void dependencyLogic (String masterId ){
-
-//         List<buildertek__Project_Task__c> masterScheduleList = new List<buildertek__Project_Task__c>([select Id, Name, buildertek__Start__c, buildertek__Schedule__c, buildertek__Completed__c, buildertek__Completion__c, buildertek__Contractor_Resource__c, buildertek__Cost_Code__c, buildertek__Duration__c, buildertek__Finish__c, buildertek__Resource__c, buildertek__Lag__c, buildertek__Last_Saved_End_Date__c, buildertek__Last_Saved_Start_Date__c, buildertek__Material_Ordered__c, buildertek__Material_Received__c, buildertek__Milestone__c, buildertek__Notes__c, buildertek__Order__c, buildertek__Original_End_Date__c, buildertek__Original_Start_Date__c, buildertek__Payable_Task__c, buildertek__Project__c from buildertek__Project_Task__c where buildertek__Schedule__c = :masterId  order by createdDate]);
-
-//         Set<buildertek__Project_Task__C> mTaskId = new Set<buildertek__Project_Task__C>([select Id, buildertek__Dependency__c from from buildertek__Project_Task__c where buildertek__Schedule__c = :masterId]);

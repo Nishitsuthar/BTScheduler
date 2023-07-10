@@ -506,10 +506,11 @@ export default base => class GanttToolbar extends base {
         // console.log('gantt :- ',temp2);
         try {
             console.log('gantt-->',this.gantt);
-            let temp = gantt.project.taskStore.getRecords();
+            // let temp = this.gantt.tasks;
+            let temp = this.gantt.data;
             console.log('gantt data:- ',JSON.parse(JSON.stringify(temp)));
             console.log('gantt project data:- ',this.gantt.project);
-            
+
         } catch (error) {
             console.log('Error-->'+error+' message-->'+error.message);
         }
