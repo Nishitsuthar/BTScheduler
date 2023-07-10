@@ -21,10 +21,10 @@ export default class Create_New_Schedule extends NavigationMixin(LightningElemen
     @track masterRec = '';
     @track listOfFields = [];
     @track scheduleLineItems = [];
+    @track initialStartDate;
     description = '';
     intialDate = '';
     type = 'Standard';
-    formattedDate;
 
     connectedCallback(event) {
         document.addEventListener('click', this.handleDocumentEvent.bind(this));
@@ -141,8 +141,8 @@ export default class Create_New_Schedule extends NavigationMixin(LightningElemen
     }
 
     handleStartDateChange(event) {
-        this.initialDate = event.target.value;
-        console.log('formattedDate', this.initialDate);
+        this.initialStartDate = event.target.value;
+        console.log('formattedDate', this.initialStartDate);
     }
 
     handleTypeChange(event) {
@@ -152,30 +152,40 @@ export default class Create_New_Schedule extends NavigationMixin(LightningElemen
 
     createSchedule() {
         try {
-            console.log(`description: ${this.description} projectId: ${this.projectId} formattedDate: ${this.formattedDate} type: ${this.type} userId: ${this.userId} masterRec: ${this.masterRec}`);
-            createNewSchedule({ description: this.description, project: this.projectId, initialDate: this.initialDate, type: this.type, user: this.userId, masterId: this.masterRec })
+            console.log(`description: ${this.description} projectId: ${this.projectId} formattedDate: ${this.initialStartDate} type: ${this.type} userId: ${this.userId} masterRec: 
+            ${this.masterRec}`);
+            createNewSchedule({ description: this.description, project: this.projectId, initialStartDate: this.initialStartDate, type: this.type, user: this.userId, masterId: this.masterRec })
                 .then((result) => {
                     console.log('url:', result);
+                    // let cmpDef = {
+                    //     componentDef: "c:gantt_component",
+                    // };
+
+                    // let encodedDef = btoa(JSON.stringify(cmpDef));
                     // this[NavigationMixin.Navigate]({
-                    //     type: 'standard__recordPage',
+                    //     type: "standard__webPage",
                     //     attributes: {
-                    //         recordId: result,
-                    //         objectApiName: 'buildertek__Schedule__c',
-                    //         actionName: 'view'
-                    //     }
+                    //         url: "/one/one.app#" + encodedDef
+                    //     },
                     // });
+
                     let cmpDef = {
                         componentDef: "c:gantt_component",
-                        id: result,
+                        attributes: {
+                            SchedulerId: result != "" ? result : "No Record Created",
+                        }
                     };
-
+                    // // let toast_error_msg_object = 'Your Form is Created Successfully';
+                    // this.template.querySelector('c-toast-component').showToast('success', toast_error_msg_object, 3000);
                     let encodedDef = btoa(JSON.stringify(cmpDef));
+
                     this[NavigationMixin.Navigate]({
                         type: "standard__webPage",
                         attributes: {
                             url: "/one/one.app#" + encodedDef
                         }
                     });
+
                 })
                 .catch((error) => {
                     console.log('error:', error);

@@ -482,124 +482,119 @@ public with sharing class bryntumGanttController {
                 order by createdDate];
     }
 
+    /* @Author        Karan Patel
+     * Date           10-7-23
+     * Description :  This method is used to create New Schedule.
+     */
+
     @AuraEnabled
-    public static String createNewSchedule(String description, Id project ,Date initialDate, String type, String user, String masterId) {
+    public static String createNewSchedule(String description, Id project ,Date initialStartDate, String type, String user, String masterId) {
         System.debug('description: ' + description);
         System.debug('project: ' + project);
-        System.debug('initialDate: ' + initialDate);
+        System.debug('initialStartDate: ' + initialStartDate);
         System.debug('type: ' + type);
         System.debug('user: ' + user);
         System.debug('masterId: ' + masterId);
         buildertek__Schedule__c schedule = new buildertek__Schedule__c(
             buildertek__Description__c = description,
             buildertek__Project__c = project,
-            buildertek__Initial_Start_Date__c = date.parse(initialDate.format()),
+            buildertek__Initial_Start_Date__c = date.parse(initialStartDate.format()),
             buildertek__Type__c = type,
             buildertek__Project_Managers__c = user
         );
         insert schedule;
         String pageUrl = schedule.Id;
-        dependencyLogic(schedule.Id, masterId, initialDate);
+        createScheduleLineFromMasterSchedule(schedule.Id, masterId, initialStartDate);
         return pageUrl;
     }
 
+    /* @Author        Karan Patel
+     * Date           10-7-23
+     * Description :  This method is used to create New ScheduleLine from Master Schedule.
+     */
+    
     @AuraEnabled
-    public static void dependencyLogic (String recordId, String masterId, Date initialDate){
-        // Date initialDate =  System.Today();
-        System.debug('initialDate: ' + initialDate);
-        Map<Id, buildertek__Project_Task__c> projectTaskMap = new Map<Id, buildertek__Project_Task__c>();
-
+    public static void createScheduleLineFromMasterSchedule (String recordId, String masterId, Date initialStartDate){
+        System.debug('initialStartDate: ' + initialStartDate);
+        Map<Id, buildertek__Project_Task__c> projectInsertTaskMap = new Map<Id, buildertek__Project_Task__c>();
         List<buildertek__Project_Task__c> masterScheduleList = new List<buildertek__Project_Task__c>([select Id, Name, buildertek__Start__c,buildertek__Contractor__c,buildertek__Phase__c, buildertek__Schedule__c,buildertek__Dependency__r.Name, buildertek__Dependency__r.buildertek__Schedule__c, buildertek__Completed__c, buildertek__Completion__c, buildertek__Contractor_Resource__c, buildertek__Type__c,buildertek__Cost_Code__c, buildertek__Duration__c, buildertek__Finish__c, buildertek__Resource__c, buildertek__Lag__c, buildertek__Last_Saved_End_Date__c, buildertek__Last_Saved_Start_Date__c, buildertek__Material_Ordered__c, buildertek__Material_Received__c, buildertek__Milestone__c, buildertek__Notes__c, buildertek__Order__c, buildertek__Original_End_Date__c, buildertek__Original_Start_Date__c, buildertek__Payable_Task__c, buildertek__Project__c, buildertek__Purchase_Order__c, buildertek__Reason_for_Date_Change__c, buildertek__Reason_for_Date_Change_PL__c, buildertek__Required_Completion_Date__c  from buildertek__Project_Task__c where buildertek__Schedule__c = :masterId  order by createdDate]);
         
         System.debug('masterScheduleList: ' + masterScheduleList);
 
         Map<String, String> predecessorMap = new Map<String, String>();
 
-        for (buildertek__Project_Task__c scheduleitem : masterScheduleList){
-            if (!scheduleitem.buildertek__Milestone__c){
+        for (buildertek__Project_Task__c Masterscheduleitem : masterScheduleList){
+            if (!Masterscheduleitem.buildertek__Milestone__c){
 
-                if (scheduleitem.buildertek__Dependency__c != null) {
-                    predecessorMap.put(scheduleitem.Id, scheduleitem.buildertek__Dependency__c);
+                if (Masterscheduleitem.buildertek__Dependency__c != null) {
+                    predecessorMap.put(Masterscheduleitem.Id, Masterscheduleitem.buildertek__Dependency__c);
                 }
 
-                buildertek__Project_Task__c schItem = new buildertek__Project_Task__c();
-                schItem.buildertek__Completion__c = scheduleitem.buildertek__Completion__c;
-                schItem.buildertek__Contractor__c = scheduleitem.buildertek__Contractor__c;
-                schItem.buildertek__Contractor_Resource__c = scheduleitem.buildertek__Contractor_Resource__c;
+                buildertek__Project_Task__c newSchItem = new buildertek__Project_Task__c();
+                newSchItem.buildertek__Completion__c = Masterscheduleitem.buildertek__Completion__c;
+                newSchItem.buildertek__Contractor__c = Masterscheduleitem.buildertek__Contractor__c;
+                newSchItem.buildertek__Contractor_Resource__c = Masterscheduleitem.buildertek__Contractor_Resource__c;
                 
-                if (scheduleitem.buildertek__Duration__c != 0 && scheduleitem.buildertek__Duration__c != null){
-                    schItem.buildertek__Duration__c = scheduleitem.buildertek__Duration__c;
+                if (Masterscheduleitem.buildertek__Duration__c != 0 && Masterscheduleitem.buildertek__Duration__c != null){
+                    newSchItem.buildertek__Duration__c = Masterscheduleitem.buildertek__Duration__c;
                 } else{
-                    schItem.buildertek__Duration__c = 1;
+                    newSchItem.buildertek__Duration__c = 1;
                 }
 
-                schItem.buildertek__Start__c = initialDate;
-                schItem.buildertek__Finish__c = addDaysSkippingWeekends(initialDate, Integer.valueOf(schItem.buildertek__Duration__c));
-                System.debug('finish date in import master before insertion ==> ' + schItem.buildertek__Finish__c + ' and master item id ' + schItem.id);
-                schItem.buildertek__Resource__c = scheduleitem.buildertek__Resource__c;
-                schItem.buildertek__Lag__c = scheduleitem.buildertek__Lag__c;
-                schItem.buildertek__Milestone__c = scheduleitem.buildertek__Milestone__c;
-                schItem.buildertek__Notes__c = scheduleitem.buildertek__Notes__c;
-                schItem.buildertek__Order__c = scheduleitem.buildertek__Order__c;
-                schItem.buildertek__Original_Start_Date__c = Date.today();
-                schItem.buildertek__Original_End_Date__c = Date.today().adddays(Integer.valueOf(scheduleitem.buildertek__Duration__c));
-                schItem.buildertek__Phase__c = scheduleitem.buildertek__Phase__c;
-                schItem.buildertek__Type__c = scheduleitem.buildertek__Type__c;
-                schItem.buildertek__Purchase_Order__c = scheduleitem.buildertek__Purchase_Order__c;
-                schItem.buildertek__Reason_for_Date_Change__c = scheduleitem.buildertek__Reason_for_Date_Change__c;
-                schItem.buildertek__Reason_for_Date_Change_PL__c = scheduleitem.buildertek__Reason_for_Date_Change_PL__c;
-                schItem.buildertek__Required_Completion_Date__c = scheduleitem.buildertek__Required_Completion_Date__c;
-                schItem.buildertek__Schedule__c = recordId;
-                schItem.buildertek__Reference_for_Import__c = scheduleitem.Id;
+                newSchItem.buildertek__Start__c = initialStartDate;
+                newSchItem.buildertek__Finish__c = addDaysSkippingWeekends(initialStartDate, Integer.valueOf(newSchItem.buildertek__Duration__c));
+                System.debug('finish date in import master before insertion ==> ' + newSchItem.buildertek__Finish__c + ' and master item id ' + newSchItem.id);
+                newSchItem.buildertek__Resource__c = Masterscheduleitem.buildertek__Resource__c;
+                newSchItem.buildertek__Lag__c = Masterscheduleitem.buildertek__Lag__c;
+                newSchItem.buildertek__Milestone__c = Masterscheduleitem.buildertek__Milestone__c;
+                newSchItem.buildertek__Notes__c = Masterscheduleitem.buildertek__Notes__c;
+                newSchItem.buildertek__Order__c = Masterscheduleitem.buildertek__Order__c;
+                newSchItem.buildertek__Original_Start_Date__c = Date.today();
+                newSchItem.buildertek__Original_End_Date__c = Date.today().adddays(Integer.valueOf(Masterscheduleitem.buildertek__Duration__c));
+                newSchItem.buildertek__Phase__c = Masterscheduleitem.buildertek__Phase__c;
+                newSchItem.buildertek__Type__c = Masterscheduleitem.buildertek__Type__c;
+                newSchItem.buildertek__Purchase_Order__c = Masterscheduleitem.buildertek__Purchase_Order__c;
+                newSchItem.buildertek__Reason_for_Date_Change__c = Masterscheduleitem.buildertek__Reason_for_Date_Change__c;
+                newSchItem.buildertek__Reason_for_Date_Change_PL__c = Masterscheduleitem.buildertek__Reason_for_Date_Change_PL__c;
+                newSchItem.buildertek__Required_Completion_Date__c = Masterscheduleitem.buildertek__Required_Completion_Date__c;
+                newSchItem.buildertek__Schedule__c = recordId;
+                newSchItem.buildertek__Reference_for_Import__c = Masterscheduleitem.Id;
                 
-                // if (initialDate != null){
-                //     schItem.buildertek__Start__c = initialDate;
-                //     System.debug('start date in import master before insertion ==> ' + schItem.buildertek__Start__c);
-                // } else{
-                //     Date today = system.today();
-                //     schItem.buildertek__Start__c = today;
-                //     System.debug('start date in else condition import master before insertion ==> ' + schItem.buildertek__Start__c);
-                // }
+                newSchItem.Name = Masterscheduleitem.Name;
+                buildertek__Project_Task__c newSchItemClone = newSchItem.Clone(false, true);
+                projectInsertTaskMap.put(Masterscheduleitem.Id, newSchItemClone);
 
-                schItem.Name = scheduleitem.Name;
-                buildertek__Project_Task__c schItemClone = schItem.Clone(false, true);
-                projectTaskMap.put(scheduleitem.Id, schItemClone);
-
-                System.debug('projectTaskMap values ==> ' + projectTaskMap.values());
+                System.debug('projectInsertTaskMap values ==> ' + projectInsertTaskMap.values());
             }
         }
-        
-        // Database.SaveResult[] saveResultList = Database.insert (projectTaskMap.values(), false);
-
-        insert projectTaskMap.values();
+        // ProjectTaskTriggerHandler.blnSkipTaskTrigger = true;
+        insert projectInsertTaskMap.values();
+        // ProjectTaskTriggerHandler.blnSkipTaskTrigger = false;
 
         for (String key : predecessorMap.keySet()) {
-            projectTaskMap.get(key).buildertek__Dependency__c = projectTaskMap.get(predecessorMap.get(key)).Id;
+            projectInsertTaskMap.get(key).buildertek__Dependency__c = projectInsertTaskMap.get(predecessorMap.get(key)).Id;
         }
-
-        update projectTaskMap.values();
+        // ProjectTaskTriggerHandler.blnSkipTaskTrigger = true;
+        update projectInsertTaskMap.values();
+        // ProjectTaskTriggerHandler.blnSkipTaskTrigger = false;
     }
 
-
     // Skip weekend and calculate date
-	public static Date addDaysSkippingWeekends(Date sDate, Integer days){
-		Date result = sDate;
+	public static Date addDaysSkippingWeekends(Date startDate, Integer duration){
+		Date resultantStartDate = startDate;
 		Integer addedDays = 0;
-		while (addedDays < days){
-			System.debug('result ==> '+result);
-			result = result.addDays(1);
-			System.debug('result after adding day ==> '+result);
-			// if (!(result.getDayOfWeek() == DayOfWeek.SATURDAY || result.getDayOfWeek() == DayOfWeek.SUNDAY)) {
-			//     ++addedDays;
-			// }
-			DateTime currentDate = DateTime.newInstance(result.year(), result.month(), result.day());
+		while (addedDays < duration){
+			System.debug('resultantStartDate ==> '+resultantStartDate);
+			resultantStartDate = resultantStartDate.addDays(1);
+			System.debug('resultantStartDate after adding day ==> '+resultantStartDate);
+			DateTime currentDate = DateTime.newInstance(resultantStartDate.year(), resultantStartDate.month(), resultantStartDate.day());
 			String todayDay = currentDate.format('EEEE');
 			if (todayDay != 'Saturday' && todayDay != 'Sunday'){
 				++addedDays;
 			}
 		}
-		System.debug('end result in addDayskepping method ==> '+result);
-		return result;
+		System.debug('end resultantStartDate in addDayskepping method ==> '+resultantStartDate);
+		return resultantStartDate;
 	}
 
 }
