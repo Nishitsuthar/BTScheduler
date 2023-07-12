@@ -428,7 +428,7 @@ function formatApexDatatoJSData(scheduleData, scheduleItemsData, scheduleItemsDa
                 }
 
             }
-        
+
             if(!taskListForPhase[i].buildertek__Milestone__c && taskListForPhase[i].buildertek__Contractor_Resource__c){
 
                 if(resourceRowIdList.indexOf(taskListForPhase[i].buildertek__Contractor_Resource__c) < 0){
@@ -472,4 +472,48 @@ function formatApexDatatoJSData(scheduleData, scheduleItemsData, scheduleItemsDa
     return formattedData;
 }
 
-export{ formatApexDatatoJSData};
+function formatJSDatatoApexData(libraryDataList) {
+    let dataForApexController = {};
+    let scheduleItemList = [];
+    let scheduleObj = {};
+    libraryDataList.forEach(LibraryData => {
+        var scheduleItemObj = {};
+        console.log('check lib data ',LibraryData);
+        if (LibraryData['type'] === "Project") {
+            const endDateTimeSchedule = convertDateTime(LibraryData.endDate);
+            scheduleObj['id'] = LibraryData.id;
+            scheduleObj['buildertek__End_date__c'] = endDateTimeSchedule.substring(0, 8);
+        }else if(LibraryData['type'] === "Task"){
+            scheduleItemObj['Id'] = LibraryData.id;
+            scheduleItemObj['Name'] = LibraryData.name;
+            scheduleItemObj['buildertek__Completion__c'] = LibraryData.percentDone;
+            scheduleItemObj['buildertek__Start_Date_Time__c'] = convertDateTime(LibraryData.startDate);
+            scheduleItemObj['buildertek__End_Date_Time__c'] = convertDateTime(LibraryData.endDate);
+            scheduleItemObj['buildertek__Duration__c'] = LibraryData.duration;
+            scheduleItemObj['buildertek__Dependency__c'] = LibraryData.predecessor;
+            scheduleItemObj['buildertek__Phase__c'] = LibraryData.phase;
+            scheduleItemList.push(scheduleItemObj);
+        }
+    });
+    console.log('scheduleObj ',scheduleObj);
+    dataForApexController['scheduleObj'] = scheduleObj;
+    dataForApexController['scheduleItemList'] = scheduleItemList;
+    console.log('dataForApexController check ',dataForApexController);
+    return dataForApexController;
+}
+
+function convertDateTime(dateString) {
+    // Convert the date string to a JavaScript Date object
+    const date = new Date(dateString);
+    // Get the current time zone offset in milliseconds
+    const timeZoneOffset = date.getTimezoneOffset() * 60000;
+    // Convert the date to UTC
+    const utcDate = new Date(date.getTime() - timeZoneOffset);
+    // Format the UTC date to the desired format
+    const formattedDate = utcDate.toISOString();
+    // Remove the "Z" at the end of the formatted date
+    const newDate = formattedDate.slice(0, -1);
+    return newDate;
+  }
+
+export{ formatApexDatatoJSData, formatJSDatatoApexData};

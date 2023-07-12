@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Displays Release Note to users providing details regarding new updates.</description>
+    <label>Release Note</label>
+    <lwcComponent>releaseNote</lwcComponent>
+    <motif>Custom20: Airplane</motif>
+</CustomTab>

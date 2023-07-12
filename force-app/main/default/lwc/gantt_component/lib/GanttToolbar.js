@@ -1,4 +1,5 @@
 /* globals bryntum : true */
+import { formatJSDatatoApexData } from "../gantt_componentHelper";
 export default base => class GanttToolbar extends base {
     static get $name() {
         return 'GanttToolbar';
@@ -267,15 +268,10 @@ export default base => class GanttToolbar extends base {
                         {
                             type     : 'button',
                             text     : 'Export as .xslx',
+                            color    : 'b-blue',
                             ref      : 'excelExportBtn',
                             icon     : 'b-fa-file-export',
-                            onAction : () => {
-                                console.log('In export function');
-                                const filename = 'test file.xml';
-                                gantt.features.excelExporter.export({
-                                    filename
-                                });
-                            }
+                            onAction : 'up.onExportclick'
                         },
                         {
                             type       : 'button',
@@ -502,18 +498,32 @@ export default base => class GanttToolbar extends base {
     }
 
     onSaveClick(){
-        // let temp2 = this.gantt.__data;
-        // console.log('gantt :- ',temp2);
         try {
-            console.log('gantt-->',this.gantt);
-            // let temp = this.gantt.tasks;
-            let temp = this.gantt.data;
-            console.log('gantt data:- ',JSON.parse(JSON.stringify(temp)));
-            console.log('gantt project data:- ',this.gantt.project);
+            var libraryDataList = [];
+            for (let i = 0; i < this.gantt.data.length; i++) {
+                const data = this.gantt.data[i]._data;
+                libraryDataList.push(data);
+            }
+            console.log('new data lib ',libraryDataList);
+            let dataForApexController = formatJSDatatoApexData(libraryDataList);
+            console.log('check new data here ',dataForApexController);
 
         } catch (error) {
             console.log('Error-->'+error+' message-->'+error.message);
         }
 
+    }
+
+    onExportclick(){
+        console.log('onExportclick');
+        this.gantt.features.pdfExport.showExportDialog();
+        // Simple export
+        this.gantt.features.pdfExport.export({
+            // Required, set list of column ids to export
+            columns : this.gantt.columns.map(c => c.id)
+        }).then(result => {
+            // Response instance and response content in JSON
+            let { response, responseJSON } = result;
+        });
     }
 };
