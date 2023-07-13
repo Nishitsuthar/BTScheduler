@@ -1,3 +1,22 @@
 <template>
     <div class="container" lwc:dom="manual"></div>
+
+    <!-- pop up model for exporting schedule -->
+    <template if:true={showExportPopup}>
+        <c-gantt-c-s-v-export-component onhidemodel={hideModalBox} schedule-data-to-export={scheduleItemsDataList}></c-gantt-c-s-v-export-component>
+    </template>
+
+    <template if:true={showEditResourcePopup}>
+        <buildertek-edit-resources field-api-name={selectedContactApiName} taskid={taskRecordId} selected-resourceid={selectedResourceContact}
+         oncontactselected={handlecontactSelection} onclosepopuevent={closeEditPopup} onsaveres={saveSelectedContact}>
+        </buildertek-edit-resources>
+        <!-- <div class="slds-backdrop slds-backdrop_open"></div> -->
+      </template>
+      
+      <!--Added for contract-->
+        <template if:true={showContractor}>
+            <buildertek-edit-acc-resources field-api-name={selectedContactApiName} selected-resourceid={selectedResourceAccount}
+            oncontactselected={handleaccountSelectionContractor} onclosepopuevent={closeEditPopup} onsaveres={saveSelectedContact}>
+            </buildertek-edit-acc-resources>
+        </template>
 </template>

@@ -1,31 +1,31 @@
 function populateIcons(record) {
-    // console.log('popluate record-->',record);
+    // console.log('popluate record-->',record.record._data);
     if (record.row) {
         if (record.row._allCells.length) {
             if (
                 record.record._data.type == "Project" &&
-                record.row._allCells[5].innerHTML
+                record.row._allCells[1].innerHTML
             ) {
-                var iconElement = `<span class="slds-icon_container slds-icon-custom-custom" >
+                var iconElement = `<span class="slds-icon_container slds-icon-custom-custom70" >
                                             <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
                                                 <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/custom-sprite/svg/symbols.svg#custom70">
                                                 </use>
                                             </svg>
                                         </span>`;
-                if (record.row._allCells[5].children[0]) {
+                if (record.row._allCells[1].children[0]) {
                     if (
-                        record.row._allCells[5].children[0].innerHTML.indexOf(
+                        record.row._allCells[1].children[0].innerHTML.indexOf(
                             "custom70"
                         ) == -1
                     ) {
-                        record.row._allCells[5].children[0].innerHTML =
-                            iconElement + record.row._allCells[5].children[0].innerHTML;
+                        record.row._allCells[1].children[0].innerHTML =
+                            iconElement + record.row._allCells[1].children[0].innerHTML;
                     }
                 }
             }
             if (
                 record.record._data.type == "Phase" &&
-                record.row._allCells[5].innerHTML
+                record.row._allCells[1].innerHTML
             ) {
                 var iconElement = `<span class="slds-icon_container slds-icon-standard-task" >
                                             <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
@@ -33,29 +33,29 @@ function populateIcons(record) {
                                                 </use>
                                             </svg>
                                         </span>`;
-                if (record.row._allCells[5].children[0]) {
+                if (record.row._allCells[1].children[0]) {
                     if (
-                        record.row._allCells[5].children[0].innerHTML.indexOf(
+                        record.row._allCells[1].children[0].innerHTML.indexOf(
                             "slds-icon-standard-task"
                         ) == -1
                     ) {
-                        record.row._allCells[5].children[0].innerHTML =
-                            iconElement + record.row._allCells[5].children[0].innerHTML;
+                        record.row._allCells[1].children[0].innerHTML =
+                            iconElement + record.row._allCells[1].children[0].innerHTML;
                     }
                 }
             }
             if (
                 record.record._data.type == "Task" &&
-                record.row._allCells[5].innerHTML
+                record.row._allCells[1].innerHTML
             ) {
                 if (
                     record.record._data.iconCls == "b-fa b-fa-arrow-left indentTrue" &&
-                    record.row._allCells[5].children[0].classList.contains(
+                    record.row._allCells[1].children[0].classList.contains(
                         "indentCellTrue"
                     ) == false
                 ) {
-                    if (record.row._allCells[5].children[0]) {
-                        record.row._allCells[5].children[0].classList.add(
+                    if (record.row._allCells[1].children[0]) {
+                        record.row._allCells[1].children[0].classList.add(
                             "indentCellTrue"
                         );
                     }
@@ -69,14 +69,14 @@ function populateIcons(record) {
                                                         </use>
                                                     </svg>
                                                 </span>`;
-                        if (record.row._allCells[5].children[0]) {
+                        if (record.row._allCells[1].children[0]) {
                             if (
-                                record.row._allCells[5].children[0].innerHTML.indexOf(
+                                record.row._allCells[1].children[0].innerHTML.indexOf(
                                     "slds-icon-utility-multi_select_checkbox"
                                 ) == -1
                             ) {
-                                record.row._allCells[5].children[0].innerHTML =
-                                    iconElement + record.row._allCells[5].children[0].innerHTML;
+                                record.row._allCells[1].children[0].innerHTML =
+                                    iconElement + record.row._allCells[1].children[0].innerHTML;
                             }
                         }
                     } else {
@@ -90,14 +90,14 @@ function populateIcons(record) {
                                                         l13.2-13.2c0.6-0.6,1.5-0.6,2.1,0l2.1,2.1C56.8,49.5,56.8,50.5,56.3,51z"/>
                                                     </svg>
                                                 </span>`;
-                        if (record.row._allCells[5].children[0]) {
+                        if (record.row._allCells[1].children[0]) {
                             if (
-                                record.row._allCells[5].children[0].innerHTML.indexOf(
+                                record.row._allCells[1].children[0].innerHTML.indexOf(
                                     "slds-icon-utility-multi_select_checkbox"
                                 ) == -1
                             ) {
-                                record.row._allCells[5].children[0].innerHTML =
-                                    iconElement + record.row._allCells[5].children[0].innerHTML;
+                                record.row._allCells[1].children[0].innerHTML =
+                                    iconElement + record.row._allCells[1].children[0].innerHTML;
                             }
                         }
                     }
@@ -114,14 +114,14 @@ function populateIcons(record) {
                                                         </use>
                                                     </svg>
                                                 </span>`;
-                        if (record.row._allCells[5].children[0]) {
+                        if (record.row._allCells[1].children[0]) {
                             if (
-                                record.row._allCells[5].children[0].innerHTML.indexOf(
+                                record.row._allCells[1].children[0].innerHTML.indexOf(
                                     "slds-icon-custom-custom8"
                                 ) == -1
                             ) {
-                                record.row._allCells[5].children[0].innerHTML =
-                                    iconElement + record.row._allCells[5].children[0].innerHTML;
+                                record.row._allCells[1].children[0].innerHTML =
+                                    iconElement + record.row._allCells[1].children[0].innerHTML;
                             }
                         }
                     } else {
@@ -131,14 +131,14 @@ function populateIcons(record) {
                                                         </use>
                                                     </svg>
                                                 </span>`;
-                        if (record.row._allCells[5].children[0]) {
+                        if (record.row._allCells[1].children[0]) {
                             if (
-                                record.row._allCells[5].children[0].innerHTML.indexOf(
+                                record.row._allCells[1].children[0].innerHTML.indexOf(
                                     "slds-icon-standard-task2"
                                 ) == -1
                             ) {
-                                record.row._allCells[5].children[0].innerHTML =
-                                    iconElement + record.row._allCells[5].children[0].innerHTML;
+                                record.row._allCells[1].children[0].innerHTML =
+                                    iconElement + record.row._allCells[1].children[0].innerHTML;
                             }
                         }
                     }
@@ -149,43 +149,66 @@ function populateIcons(record) {
 }
 
 function populateIconsOnExpandCollapse(source) {
+    console.log('in populateiconsonexpandcollapse');
+    console.log('template queryselector :- ', this.template.querySelector('[data-id="' + source.record.id + '"]') );
     var rowPhaseElement = this.template.querySelector(
         '[data-id="' + source.record.id + '"]'
     );
+    console.log('rowPhaseElement :- ',rowPhaseElement);
     if (rowPhaseElement && rowPhaseElement.innerHTML) {
+        console.log('In Here first if condition');
         var iconElement = "";
         if (source.record.type == "Phase") {
+            console.log('In Here phase if condition');
             iconElement = `<span class="slds-icon_container slds-icon-standard-task" >
-                                    <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
-                                        <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/standard-sprite/svg/symbols.svg#task">
-                                        </use>
-                                    </svg>
-                                </span>`;
+                                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
+                                            <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/standard-sprite/svg/symbols.svg#task">
+                                            </use>
+                                        </svg>
+                                    </span>`;
             if (
                 rowPhaseElement.innerHTML.indexOf("slds-icon-standard-task") == -1
             ) {
                 if (rowPhaseElement.children.length) {
-                    if (rowPhaseElement.children[5].children.length) {
-                        rowPhaseElement.children[5].children[0].innerHTML =
-                            iconElement + rowPhaseElement.children[5].children[0].innerHTML;
+                    if (rowPhaseElement.children[1].children.length) {
+                        rowPhaseElement.children[1].children[0].innerHTML =
+                            iconElement + rowPhaseElement.children[1].children[0].innerHTML;
                     }
                 }
             }
         } else if (source.record.type == "Project") {
+            console.log('In Here Project if condition');
             iconElement = `<span class="slds-icon_container slds-icon-custom-custom70" >
-                                    <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
-                                    <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/custom-sprite/svg/symbols.svg#custom70">
-                                        </use>
-                                    </svg>
-                                </span>`;
+                                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
+                                        <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/custom-sprite/svg/symbols.svg#custom70">
+                                            </use>
+                                        </svg>
+                                    </span>`;
             if (
                 rowPhaseElement.innerHTML.indexOf("slds-icon-custom-custom70") == -1
             ) {
                 if (rowPhaseElement.children.length) {
-                    if (rowPhaseElement.children[5].children.length) {
-                        rowPhaseElement.children[5].children[0].innerHTML =
-                            iconElement + rowPhaseElement.children[5].children[0].innerHTML;
+                    if (rowPhaseElement.children[1].children.length) {
+                        rowPhaseElement.children[1].children[0].innerHTML =
+                            iconElement + rowPhaseElement.children[1].children[0].innerHTML;
                     }
+                }
+            }
+        } else {
+            var iconElement = `<span class="slds-icon_container slds-icon-standard-task2" style="background:orange;">
+                                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
+                                            <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/standard-sprite/svg/symbols.svg#task2">
+                                            </use>
+                                        </svg>
+                                    </span>`;
+            if (record.row._allCells[1].children[0]) {
+                if (
+                    record.row._allCells[1].children[0].innerHTML.indexOf(
+                        "slds-icon-standard-task2"
+                    ) == -1
+                ) {
+                    record.row._allCells[1].children[0].innerHTML =
+                        iconElement + record.row._allCells[1].children[0].innerHTML;
                 }
             }
         }

@@ -267,7 +267,7 @@ export default base => class GanttToolbar extends base {
                         },
                         {
                             type     : 'button',
-                            text     : 'Export as .xslx',
+                            text     : 'Export Schedule',
                             color    : 'b-blue',
                             ref      : 'excelExportBtn',
                             icon     : 'b-fa-file-export',
@@ -515,15 +515,6 @@ export default base => class GanttToolbar extends base {
     }
 
     onExportclick(){
-        console.log('onExportclick');
-        this.gantt.features.pdfExport.showExportDialog();
-        // Simple export
-        this.gantt.features.pdfExport.export({
-            // Required, set list of column ids to export
-            columns : this.gantt.columns.map(c => c.id)
-        }).then(result => {
-            // Response instance and response content in JSON
-            let { response, responseJSON } = result;
-        });
+        this.gantt.callGanttComponent.exportData();
     }
 };
