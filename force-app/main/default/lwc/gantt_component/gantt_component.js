@@ -3,10 +3,15 @@ import { api, LightningElement, track, wire } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { loadScript, loadStyle } from "lightning/platformResourceLoader";
 import GANTT from "@salesforce/resourceUrl/bryntum_gantt_new";
+
+import GanttStyle from "@salesforce/resourceUrl/buildertek__BT_Bryntum_NewGanttCss";
+import GANTTModule from "@salesforce/resourceUrl/buildertek__BT_Bryntum_NewGantt_ModuleJS";
+
 // import GanttStyle from "@salesforce/resourceUrl/BT_Bryntum_NewGanttCss";
 import GanttToolbarMixin from "./lib/GanttToolbar";
 import data from "./data/launch-saas";
 import scheduleWrapperDataFromApex from "@salesforce/apex/bryntumGanttController.getScheduleWrapperAtLoading";
+import saveResourceForRecord from "@salesforce/apex/bryntumGanttController.saveResourceForRecord";
 import { formatApexDatatoJSData } from "./gantt_componentHelper";
 import {
   populateIcons,
@@ -59,6 +64,7 @@ export default class Gantt_component extends LightningElement {
     } else {
       console.log("SchedulerId :- ", this.SchedulerId);
     }
+    this.loadLibraries();
     this.getScheduleWrapperDataFromApex();
   }
 
@@ -68,26 +74,33 @@ export default class Gantt_component extends LightningElement {
         return;
       }
       this.bryntumInitialized = true;
+      this.loadLibraries();
+    }, 1500);
+  }
 
-      Promise.all([
-        loadScript(this, GANTT + "/gantt.lwc.module.min.js"),
-        loadStyle(this, GANTT + "/gantt.stockholm-1.css")
-        // loadStyle(this, GanttStyle + "/gantt.stockholm.css")
-      ])
-        .then(() => {
-          console.log("lib loaded");
-          this.islibraryloaded = true;
-        })
-        .catch((error) => {
-          this.dispatchEvent(
-            new ShowToastEvent({
-              title: "Error loading Bryntum Gantt",
-              message: error,
-              variant: "error"
-            })
-          );
-        });
-    }, 1000);
+  loadLibraries(){
+    Promise.all([
+      console.log('Lodding libraries'),
+      // loadScript(this, GANTT + "/gantt.lwc.module.min.js"),
+      // loadStyle(this, GANTT + "/gantt.stockholm-1.css"),
+      loadScript(this, GANTTModule),
+      loadStyle(this, GanttStyle + "/gantt.stockholm.css"),
+      console.log('Loaded libraries'),
+      // loadStyle(this, GanttStyle + "/gantt.stockholm.css")
+    ])
+      .then(() => {
+        console.log("lib loaded");
+        this.islibraryloaded = true;
+      })
+      .catch((error) => {
+        this.dispatchEvent(
+          new ShowToastEvent({
+            title: "Error loading Bryntum Gantt",
+            message: error,
+            variant: "error"
+          })
+        );
+      });
   }
 
   getScheduleWrapperDataFromApex() {
@@ -261,7 +274,9 @@ export default class Gantt_component extends LightningElement {
         console.log("^ In If ^");
         that.showContractor = false; //Added for contractor
         this.isLoaded = true;
-
+        console.log('taskRecordId:-',this.taskRecordId);
+        console.log('selectedResourceAccount:-',this.selectedResourceAccount);
+        console.log('contracFieldApiName:-',this.contracFieldApiName);
         saveResourceForRecord({
           taskId: this.taskRecordId,
           resourceId: this.selectedResourceAccount,
@@ -273,7 +288,7 @@ export default class Gantt_component extends LightningElement {
             },
           });
           that.dispatchEvent(filterChangeEvent);
-          that.gettaskrecords();
+          that.getScheduleWrapperDataFromApex();
           that.showEditResourcePopup = false;
         });
         that.contracFieldApiName = "";
@@ -295,10 +310,39 @@ export default class Gantt_component extends LightningElement {
             },
           });
           that.dispatchEvent(filterChangeEvent);
-          that.gettaskrecords();
+          that.getScheduleWrapperDataFromApex();
         });
       }
     }
+  }
+
+  closeEditPopup(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.selectedContactApiName = "";
+    this.selectedResourceContact = "";
+    this.showFileForRecord = "";
+    this.showFilePopup = false;
+    this.showCommentPopup = false;
+    this.schItemComment = "";
+    this.isLoaded = false;
+    this.predecessorVal = "";
+    this.taskPhaseVal = "";
+    this.newTaskPopupName = "";
+    this.newTaskStartDate = "";
+    this.newTaskDuration = "";
+    this.newTaskLag = 0;
+    this.taskRecordId = "";
+    this.newTaskOrder = null;
+    this.newTaskCompletion = null;
+    this.showEditPopup = false;
+    this.showDeletePopup = false;
+    this.showEditResourcePopup = false;
+    this.saveCommentSpinner = false;
+    this.newNotesList = [];
+
+    this.showContractor = false; //Added for contractor
+    Object.assign(this.newTaskRecordCreate, this.newTaskRecordClone);
   }
 
   //populateIconsOnExpandCollapse
@@ -315,7 +359,7 @@ export default class Gantt_component extends LightningElement {
         if (source.record.type == "Phase") {
             console.log('In Here phase if condition');
             iconElement = `<span class="slds-icon_container slds-icon-standard-task" >
-                                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
+                                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.3rem;width:1.3rem;">
                                             <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/standard-sprite/svg/symbols.svg#task">
                                             </use>
                                         </svg>
@@ -333,7 +377,7 @@ export default class Gantt_component extends LightningElement {
         } else if (source.record.type == "Project") {
             console.log('In Here Project if condition');
             iconElement = `<span class="slds-icon_container slds-icon-custom-custom70" >
-                                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
+                                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.3rem;width:1.3rem;">
                                         <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/custom-sprite/svg/symbols.svg#custom70">
                                             </use>
                                         </svg>
@@ -368,22 +412,7 @@ export default class Gantt_component extends LightningElement {
       scheduleDataList
     });
 
-    // for (var key in scheduleDataList) {
-    //   console.log('key --> ',key);
-    //   if (scheduleDataList[key].buildertek__Milestone__c == true) {
-    //     for (var ph of phaseDateList) {
-
-    //       if (scheduleDataList[key].buildertek__Phase__c == ph.label) {
-    //         scheduleDataList[key].buildertek__Start__c = ph.value.expr1;
-    //         const date1 = new Date(ph.value.expr1);
-    //         const date2 = new Date(ph.value.expr2);
-    //         const diffTime = Math.abs(date2 - date1);
-    //         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    //         scheduleDataList[key].buildertek__Duration__c = diffDays;
-    //       }
-    //     }
-    //   }
-    // }
+   
     console.log("scheduleDataList after logic changed ", {
       scheduleDataList
     });
@@ -441,15 +470,13 @@ export default class Gantt_component extends LightningElement {
           width: 250,
           renderer: (record) => {
             populateIcons(record);
-            // this.populateIcons(record);
             if (record.record._data.type == "Phase") {
               record.cellElement.style.margin = "";
             }
             if (
               record.record._data.iconCls == "b-fa b-fa-arrow-right indentTrue"
             ) {
-              console.log("Test Log");
-              //record.cellElement.style.margin = '0 0 0 1.5rem';
+              record.cellElement.style.margin = '0 0 0 1.5rem';
             }
             if (record.record._data.name == "Milestone Complete") {
               return "Milestone";
@@ -465,10 +492,10 @@ export default class Gantt_component extends LightningElement {
           type: "duration",
           allowedUnits: "hour"
         },
-        // {
-        //   type: "contractor",
-        //   width: 120
-        // },
+        {
+          type: "duration",
+          allowedUnits: "hour"
+        },
         {
           type: "percentdone",
           showCircle: true,
@@ -478,6 +505,7 @@ export default class Gantt_component extends LightningElement {
           type: "predecessor",
           width: 120,
           renderer: (record) => {
+            populateIcons(record);
             console.log(
               "record :- ",
               JSON.parse(JSON.stringify(record.record.data))
@@ -505,6 +533,7 @@ export default class Gantt_component extends LightningElement {
             Test2: "Test2"
           },
           renderer: function (record) {
+            populateIcons(record);
             if (
               record.record._data.type == "Task" &&
               record.record._data.name != "Milestone Complete"
@@ -544,6 +573,7 @@ export default class Gantt_component extends LightningElement {
           width: 120,
           editor: false,
           renderer: function (record) {
+            populateIcons(record);
             console.log(
               "record :- ",
               JSON.parse(JSON.stringify(record.record.data))
@@ -587,6 +617,7 @@ export default class Gantt_component extends LightningElement {
           width: 110,
           editor: false,
           renderer: function (record) {
+            populateIcons(record);
             if (
               record.record._data.type == "Task" &&
               record.record._data.name != "Milestone Complete"
@@ -620,10 +651,6 @@ export default class Gantt_component extends LightningElement {
             }
           }
         },
-        // {
-        //   type: "successor",
-        //   width: 112
-        // },
         {
           type: "schedulingmodecolumn"
         },
@@ -632,15 +659,6 @@ export default class Gantt_component extends LightningElement {
         },
         {
           type: "constrainttype"
-        },
-        {
-          type: "constraintdate"
-        },
-        //{ type: "statuscolumn" },
-        {
-          type: "date",
-          text: "Deadline",
-          field: "deadline"
         },
         {
           type: "addnew"
@@ -653,12 +671,13 @@ export default class Gantt_component extends LightningElement {
         },
         normal: {
           flex: 4
-        }
+        },
       },
 
       columnLines: false,
 
       features: {
+        rowReorder:false,
         rollups: {
           disabled: true
         },
@@ -681,19 +700,11 @@ export default class Gantt_component extends LightningElement {
               type: "textfield"
             }
           }
-        },
-        pdfExport: {
-          exportServer: "http://localhost:8080" // Required
-        },
-        mspExport: {
-          // Choose the filename for the exported file
-          filename: "Gantt Export"
         }
       }
     });
 
     gantt.on("cellClick", ({ record }) => {
-      // Scroll the associated task into view
       gantt.scrollTaskIntoView(record);
     });
 
@@ -726,12 +737,14 @@ export default class Gantt_component extends LightningElement {
         if (event.target.id == "editcontractor") {
           if (event.target.dataset.resource) {
             this.taskRecordId = event.record._data.id;
+            console.log('taskReocrdId:=- '+this.taskRecordId);
             this.showContractor = true;
             this.selectedContactApiName = "buildertek__Contractor__c";
             this.selectedResourceAccount = event.record._data.contractoracc;
           }
         } else if (event.target.classList.contains("addcontractor")) {
           this.taskRecordId = event.record._data.id;
+          console.log('taskReocrdId:=- '+this.taskRecordId);
           this.showContractor = true;
           this.selectedContactApiName = "buildertek__Contractor__c";
           this.selectedResourceAccount = "";
@@ -747,10 +760,6 @@ export default class Gantt_component extends LightningElement {
               "buildertek__Contractor_Resource__c";
             this.selectedResourceContact =
               event.record._data.contractorresource;
-            //   console.log(
-            //     "this.selectedResourceContact>>>",
-            //     this.selectedResourceContact
-            //   );
           }
         } else if (event.target.classList.contains("addcontractorresource")) {
           this.taskRecordId = event.record._data.id;
@@ -772,6 +781,29 @@ export default class Gantt_component extends LightningElement {
       this.populateIconsOnExpandCollapse(source);
     });
 
+    gantt.on('gridRowDrop', (record) => {
+      console.log('event', {record});
+      console.log('log :- ',record._data.type);
+      // var droppedRecord = event.records; // The record being dropped
+      // var targetRecord = event.targetRecord; // The record on which the drop occurred
+      // var position = event.position; // The position where the record was dropped (e.g., 'before', 'after', 'child')
+      // var draggedRow = event.draggedRow;
+      // var droppedRow = event.droppedRow;
+      // // Perform your custom logic here based on the dropped record, target record, and position
+      // console.log('draggedRow :',draggedRow);
+      // console.log('droppedRow :',droppedRow);
+      // console.log('Dropped Record:', droppedRecord);
+      // console.log('Target Record:', targetRecord);
+      // console.log('Position:', position);
+    
+      // Example logic: If the dropped record should be added as a child of the target record
+      if (position === 'child') {
+        // Add the dropped record as a child of the target record
+        targetRecord.appendChild(droppedRecord);
+      }
+    });
+
+    
     project.commitAsync().then(() => {
       // console.timeEnd("load data");
       const stm = gantt.project.stm;

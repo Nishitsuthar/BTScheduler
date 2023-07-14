@@ -7,7 +7,7 @@ function populateIcons(record) {
                 record.row._allCells[1].innerHTML
             ) {
                 var iconElement = `<span class="slds-icon_container slds-icon-custom-custom70" >
-                                            <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
+                                            <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.3rem;width:1.3rem;">
                                                 <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/custom-sprite/svg/symbols.svg#custom70">
                                                 </use>
                                             </svg>
@@ -28,7 +28,7 @@ function populateIcons(record) {
                 record.row._allCells[1].innerHTML
             ) {
                 var iconElement = `<span class="slds-icon_container slds-icon-standard-task" >
-                                            <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
+                                            <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.3rem;width:1.3rem;">
                                                 <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/standard-sprite/svg/symbols.svg#task">
                                                 </use>
                                             </svg>
@@ -64,7 +64,7 @@ function populateIcons(record) {
                         record.record._data.customtype == "Milestone"
                     ) {
                         var iconElement = `<span class="slds-icon_container slds-icon-custom-custom8" style="background:white;">
-                                                    <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: #e56798 !important;height:1.2rem;width:1.2rem;">
+                                                    <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: #e56798 !important;height:1.3rem;width:1.3rem;">
                                                         <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/custom-sprite/svg/symbols.svg#custom8">
                                                         </use>
                                                     </svg>
@@ -82,7 +82,7 @@ function populateIcons(record) {
                     } else {
                         var iconElement = `<span class="slds-icon_container slds-icon-utility-multi_select_checkbox" style="background:rgb(1 82 134 / 62%);">
                                                     <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
-                                                            width="1.5rem" height="1.4rem" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+                                                            width="1.3rem" height="1.4rem" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
                                                     <path fill="#FFFFFF" d="M73,20H41c-3.3,0-6,2.7-6,6v1c0,0.6,0.4,1,1,1h29c3.3,0,6,2.7,6,6v31c0,0.6,0.4,1,1,1h1c3.3,0,6-2.7,6-6V26
                                                         C79,22.7,76.3,20,73,20z"/>
                                                     <path fill="#FFFFFF" d="M59,34H27c-3.3,0-6,2.7-6,6v34c0,3.3,2.7,6,6,6h32c3.3,0,6-2.7,6-6V40C65,36.7,62.3,34,59,34z M56.3,51
@@ -109,7 +109,7 @@ function populateIcons(record) {
                         record.record._data.customtype == "Milestone"
                     ) {
                         var iconElement = `<span class="slds-icon_container slds-icon-custom-custom8" style="background:white;">
-                                                    <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: #e56798 !important;height:1.2rem;width:1.2rem;">
+                                                    <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: #e56798 !important;height:1.3rem;width:1.3rem;">
                                                         <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/custom-sprite/svg/symbols.svg#custom8">
                                                         </use>
                                                     </svg>
@@ -125,16 +125,16 @@ function populateIcons(record) {
                             }
                         }
                     } else {
-                        var iconElement = `<span class="slds-icon_container slds-icon-standard-task2" style="background:orange;">
-                                                    <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
-                                                        <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/standard-sprite/svg/symbols.svg#task2">
-                                                        </use>
-                                                    </svg>
+                        var iconElement = `<span class="slds-icon_container slds-icon-custom-custom83" style="background:orange;">
+                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: #FFFFFF !important; background: #03cfff !important; border-radius:20% !important;height:1.3rem;width:1.3rem;">
+                        <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/custom-sprite/svg/symbols.svg#custom83">
+                        </use>
+                    </svg>
                                                 </span>`;
                         if (record.row._allCells[1].children[0]) {
                             if (
                                 record.row._allCells[1].children[0].innerHTML.indexOf(
-                                    "slds-icon-standard-task2"
+                                    "slds-icon-custom-custom83"
                                 ) == -1
                             ) {
                                 record.row._allCells[1].children[0].innerHTML =
@@ -161,7 +161,7 @@ function populateIconsOnExpandCollapse(source) {
         if (source.record.type == "Phase") {
             console.log('In Here phase if condition');
             iconElement = `<span class="slds-icon_container slds-icon-standard-task" >
-                                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
+                                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.3rem;width:1.3rem;">
                                             <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/standard-sprite/svg/symbols.svg#task">
                                             </use>
                                         </svg>
@@ -179,7 +179,7 @@ function populateIconsOnExpandCollapse(source) {
         } else if (source.record.type == "Project") {
             console.log('In Here Project if condition');
             iconElement = `<span class="slds-icon_container slds-icon-custom-custom70" >
-                                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
+                                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.3rem;width:1.3rem;">
                                         <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/custom-sprite/svg/symbols.svg#custom70">
                                             </use>
                                         </svg>
@@ -196,7 +196,7 @@ function populateIconsOnExpandCollapse(source) {
             }
         } else {
             var iconElement = `<span class="slds-icon_container slds-icon-standard-task2" style="background:orange;">
-                                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.2rem;width:1.2rem;">
+                                        <svg aria-hidden="true" class="slds-icon slds-icon-text-default" style="fill: white !important;height:1.3rem;width:1.3rem;">
                                             <use xmlns:xlink=" http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/standard-sprite/svg/symbols.svg#task2">
                                             </use>
                                         </svg>
